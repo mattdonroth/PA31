@@ -30,7 +30,6 @@ public class DFA {
         }
     }
 
-
     public void printDFA(PrintWriter out){
         out.println(numStates);
         for(char a: alph){
@@ -92,7 +91,4 @@ public class DFA {
     public void setSymbols(ArrayList<String> symbols){
         this.symbols = symbols;
     }
-
-
-
 }

@@ -3,7 +3,7 @@ import java.util.HashSet;
 import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class NFA {
+public class NFA{
     private int numStates;
     private char[] alph;
     private ArrayList<DFATrans> transFunctions;
@@ -11,7 +11,7 @@ public class NFA {
     private int startState;
     private ArrayList<Integer> acceptStates;
 
-    public NFA() {}
+    public NFA(){}
     public NFA(int numStates, char[] alph, ArrayList<DFATrans> transFunctions, int startState, ArrayList<Integer> acceptStates) {
         this.numStates = numStates;
         this.alph = alph;
@@ -20,11 +20,11 @@ public class NFA {
         this.acceptStates = acceptStates;
     }
 
-    public DFA convtoDFA() {
+    public DFA convtoDFA(){
         DFA fin = new DFA();
         fin.setAlph(alph);
         ArrayList<NFATrans> transFunc = new ArrayList<>();
-        while (!transFunctions.isEmpty()) {
+        while(!transFunctions.isEmpty()){
             ArrayList<DFATrans> gone = new ArrayList<>();
             HashSet<Integer> nextStateSet = new HashSet<>();
             nextStateSet.add(transFunctions.get(0).getState2());
@@ -32,8 +32,8 @@ public class NFA {
             int tempState1 = transFunctions.get(0).getState1();
             char tempSymbol = transFunctions.get(0).getSymbol();
 
-            for (int i = 0; i < transFunctions.size(); i++) {
-                if (tempState1 == transFunctions.get(i).getState1() && tempSymbol == transFunctions.get(i).getSymbol()) {
+            for(int i = 0; i < transFunctions.size(); i++){
+                if(tempState1 == transFunctions.get(i).getState1() && tempSymbol == transFunctions.get(i).getSymbol()){
                     nextStateSet.add(transFunctions.get(i).getState2());
                     gone.add(transFunctions.get(i));
                 }
@@ -44,13 +44,13 @@ public class NFA {
         }
 
         transMap = new HashMap<>();
-        for (NFATrans tran : transFunc) {
+        for(NFATrans tran : transFunc){
             transMap.put(tran.getState1() + "" + tran.getSymbol(), tran.getState2());
         }
         LinkedBlockingQueue<HashSet<Integer>> a = new LinkedBlockingQueue<>();
 
         ArrayList<TransFunction> transFunction = new ArrayList<>();
-        for (char s : alph) {
+        for(char s : alph){
             HashSet<Integer> cur = new HashSet<>();
             cur.add(-1);
             transFunction.add(new TransFunction(cur, s, cur));
@@ -59,15 +59,15 @@ public class NFA {
         set1.add(startState);
         set1 = getEps(set1);
         getTrans(a, transFunction, set1);
-        while (!a.isEmpty()) {
+        while(!a.isEmpty()){
             HashSet<Integer> newset1 = a.poll();
             boolean hasSet = false;
-            for (TransFunction trans : transFunction) {
-                if (trans.getState1().equals(newset1)) {
+            for(TransFunction trans : transFunction){
+                if(trans.getState1().equals(newset1)){
                     hasSet = true;
                 }
             }
-            if (!hasSet) {
+            if(!hasSet){
                 getTrans(a, transFunction, newset1);
             }
         }
@@ -76,46 +76,48 @@ public class NFA {
         return fin;
     }
 
-    private HashSet<Integer> getEps(HashSet<Integer> set1) {
+    private HashSet<Integer> getEps(HashSet<Integer> set1){
         HashSet<Integer> set2 = new HashSet<>();
-        for (int state : set1) {
+        for(int state : set1){
             HashSet<Integer> temp = transMap.get(state + "e");
-            if (temp != null) {
+            if(temp != null){
                 set2.addAll(temp);
             }
         }
-        if (set1.addAll(set2)) {
+        if(set1.addAll(set2)){
             set1 = getEps(set1);
         }
         return set1;
     }
 
-    private void getTrans(LinkedBlockingQueue<HashSet<Integer>> a, ArrayList<TransFunction> transFunc, HashSet<Integer> set1) {
-        for (char l : alph) {
+    private void getTrans(LinkedBlockingQueue<HashSet<Integer>> a, ArrayList<TransFunction> transFunc, HashSet<Integer> set1){
+        for(char l : alph){
             HashSet<Integer> set2 = new HashSet<>();
-            for (int cur : set1) {
+            for(int cur : set1){
                 HashSet<Integer> temp = transMap.get(cur + "" + l);
-                if (temp != null) {
+                if(temp != null){
                     set2.addAll(temp);
                 }
             }
-            if (!set2.isEmpty()) {
+            if(!set2.isEmpty()){
                 set2 = getEps(set2);
-            } else {
+            }
+            else{
                 set2.add(-1);
             }
             TransFunction tran = new TransFunction(set1, l, set2);
             boolean hasSet = false;
-            for (TransFunction at : transFunc) {
-                if (tran.getState2().equals(at.getState1())){
+            for(TransFunction at : transFunc){
+                if(tran.getState2().equals(at.getState1())){
                     hasSet = true;
                     break;
                 }
             }
-            if (!hasSet) {
-                try {
+            if(!hasSet){
+                try{
                     a.put(set2);
-                } catch (InterruptedException ex) {
+                }
+                catch (InterruptedException ex){
                     ex.printStackTrace();
                 }
             }
@@ -123,7 +125,7 @@ public class NFA {
         }
     }
 
-    private ArrayList<DFATrans> getDFATrans(ArrayList<TransFunction> transFunc, DFA dfa, HashSet<Integer> set1) {
+    private ArrayList<DFATrans> getDFATrans(ArrayList<TransFunction> transFunc, DFA dfa, HashSet<Integer> set1){
         ArrayList<TransFunction> newTrans = new ArrayList<>();
         int numStatesDFA = 0;
         int stateNumDFA = 1;
@@ -133,7 +135,6 @@ public class NFA {
             ArrayList<TransFunction> gone = new ArrayList<>();
             HashSet<Integer> tempStartSet = transFunc.get(0).getState1();
             transFunc.get(0).setStartState(stateNumDFA);
-
             if(transFunc.get(0).getState1().equals(set1)){
                 startStateDFA=stateNumDFA;
             }
@@ -155,11 +156,11 @@ public class NFA {
             numStatesDFA++;
             stateNumDFA++;
         }
-        for(TransFunction tran: newTrans) {
+        for(TransFunction tran: newTrans){
             HashSet<Integer> tempSet = tran.getState1();
             int tempDFAState = tran.getstartState();
-            for (int i = 0; i < newTrans.size(); i++) {
-                if (newTrans.get(i).getState2().equals(tempSet)) {
+            for(int i = 0; i < newTrans.size(); i++){
+                if(newTrans.get(i).getState2().equals(tempSet)){
                     newTrans.get(i).setEndState(tempDFAState);
                 }
             }
@@ -262,3 +263,4 @@ public class NFA {
         this.acceptStates = states;
     }
 }
+
