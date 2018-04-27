@@ -112,7 +112,6 @@ public class RegularExpression{
     }
 
     private void unionAndCat(Stack<Character> opStack, Stack<Node> randStack) throws EmptyStackException{
-        //handles stack changes with union and concatenation
         char op=opStack.pop();
         Node opNode=new Node(op);
         opNode.setRight(randStack.pop());

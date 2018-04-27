@@ -13,16 +13,6 @@ public class DFA {
     private ArrayList<String> symbols;
 
     public DFA(){}
-    public DFA(int numStates, char[] alph, ArrayList<DFATrans> transitionFunctions, int startState, ArrayList<Integer> acceptStates, ArrayList<String> symbols){
-        this.numStates = numStates;
-        this.alph = alph;
-        this.transitionFunctions = transitionFunctions;
-        this.startState = startState;
-        this.acceptStates = acceptStates;
-        this.symbols = symbols;
-        makeTransMap(transitionFunctions);
-    }
-
     private void makeTransMap(ArrayList<DFATrans> transFunctions){
         transMap = new HashMap<>();
         for(DFATrans trans: transFunctions){
@@ -30,63 +20,49 @@ public class DFA {
         }
     }
 
-    public void printDFA(PrintWriter out){
-        out.println(numStates);
-        for(char a: alph){
-            out.print(a);
+    public void stringOutput(PrintWriter outStream) {
+        if (transMap == null){
+            makeTransMap(transitionFunctions);
         }
-        out.println();
-        for(DFATrans trans: transitionFunctions){
-            out.print(trans.getState1() + " ");
-            out.print(trans.getSymbol() + " ");
-            out.print(trans.getState2());
+        for(String stringSymbol : symbols){
+            int curState = startState;
+            char curSymbol;
+            boolean accept = false;
+            for(int i=0; i < stringSymbol.length(); i++ ){
+                curSymbol = stringSymbol.charAt(i);
+                String key = curState+""+curSymbol;
+                curState = transMap.get(key);
+            }
+            for(Integer acceptState : acceptStates){
+                if(curState == acceptState){
+                    accept = true;
+                }
+            }
+            if(accept){
+                outStream.println("true");
+            }
+            else{
+                outStream.println("false");
+            }
         }
-        out.println(startState);
-        for(int ac:acceptStates){
-            out.print(ac+" ");
-        }
-        out.println();
-        out.close();
+        outStream.close();
     }
+
     //gets and sets
-    public int getNumStates(){
-        return numStates;
-    }
     public void setNumStates(int numStates){
         this.numStates = numStates;
-    }
-    public char[] getAlph(){
-        return alph;
     }
     public void setAlph(char[] alph){
         this.alph = alph;
     }
-    public ArrayList<DFATrans> getTransitionFunctions(){
-        return transitionFunctions;
-    }
     public void setTransitionFunctions(ArrayList<DFATrans>transFunctions){
         this.transitionFunctions = transFunctions;
-    }
-    public HashMap<String, Integer> getTransMap(){
-        return transMap;
-    }
-    public void setTransMap(HashMap<String, Integer> transMap){
-        this.transMap = transMap;
-    }
-    public int getStartState(){
-        return startState;
     }
     public void setStartState(int startState){
         this.startState = startState;
     }
-    public ArrayList<Integer> getAcceptStates(){
-        return acceptStates;
-    }
     public void setAcceptStates(ArrayList<Integer> acceptStates){
         this.acceptStates = acceptStates;
-    }
-    public ArrayList<String> getSymbols(){
-        return symbols;
     }
     public void setSymbols(ArrayList<String> symbols){
         this.symbols = symbols;

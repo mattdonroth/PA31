@@ -8,7 +8,6 @@ public class Node{
     private Node left;
     private Node right;
 
-    public Node(){}
     public Node(char symbol){
         this.symbol = symbol;
     }
@@ -20,9 +19,6 @@ public class Node{
 
     public char getSymbol(){
         return symbol;
-    }
-    public void setSymbol(char symbol){
-        this.symbol = symbol;
     }
     public Node getLeft(){
         return left;
@@ -36,38 +32,30 @@ public class Node{
     public void setRight(Node right){
         this.right = right;
     }
-	public void printPostOrder(Node node){
-		if (node == null){
-			return;
-		}
-		printPostOrder(node.getLeft());
-		printPostOrder(node.getRight());
-		System.out.print(node.getSymbol() + " ");
-	}
 
-	public void createPostNFA(Node node, Stack<NFA> nfaStack, char[] alphabet) throws Exception{
+	public void createPostNFA(Node node, Stack<NFA> nfaStack, char[] alph) throws Exception{
 		if(node == null){
 			return;
 		}
-		createPostNFA(node.getLeft(), nfaStack, alphabet);
-		createPostNFA(node.getRight(), nfaStack, alphabet);
+		createPostNFA(node.getLeft(), nfaStack, alph);
+		createPostNFA(node.getRight(), nfaStack, alph);
 		char symbol=node.getSymbol();
 		boolean inAlphabet=false;
-		for(char letter:alphabet){
+		for(char letter:alph){
 			if(symbol == letter){
-				NFA nfa=createOneSymbolNFA(alphabet, symbol);
+				NFA nfa=createOneSymbolNFA(alph, symbol);
 				nfaStack.push(nfa);
 				inAlphabet=true;
 				break;
 			}
 			else if(symbol=='e'){
-				NFA nfa=createEpsilonNFA(alphabet);
+				NFA nfa=createEpsilonNFA(alph);
 				nfaStack.push(nfa);
 				inAlphabet=true;
 				break;
 			}
 			else if(symbol == 'N'){
-				NFA nfa=createEmptyNFA(alphabet);
+				NFA nfa=createEmptyNFA(alph);
 				nfaStack.push(nfa);
 				inAlphabet=true;
 				break;

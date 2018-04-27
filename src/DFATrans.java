@@ -21,17 +21,7 @@ public class DFATrans {
     public void setCurState(int curState){
         this.curState = curState;
     }
-    public void setSymbol(char symbol){
-        this.symbol = symbol;
-    }
     public void setNextState(int nextState){
         this.nextState = nextState;
     }
-    public boolean isAccept(){
-        return accept;
-    }
-    public void setAccept(boolean accept){
-        this.accept = accept;
-    }
-
 }

@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.HashMap;
@@ -12,15 +13,8 @@ public class NFA{
     private ArrayList<Integer> acceptStates;
 
     public NFA(){}
-    public NFA(int numStates, char[] alph, ArrayList<DFATrans> transFunctions, int startState, ArrayList<Integer> acceptStates) {
-        this.numStates = numStates;
-        this.alph = alph;
-        this.transFunctions = transFunctions;
-        this.startState = startState;
-        this.acceptStates = acceptStates;
-    }
 
-    public DFA convtoDFA(){
+    public DFA toDFA(){
         DFA fin = new DFA();
         fin.setAlph(alph);
         ArrayList<NFATrans> transFunc = new ArrayList<>();
@@ -40,7 +34,7 @@ public class NFA{
             }
             NFATrans setTrans = new NFATrans(tempState1, tempSymbol, nextStateSet);
             transFunc.add(setTrans);
-            transFunc.removeAll(gone);
+            transFunctions.removeAll(gone);
         }
 
         transMap = new HashMap<>();
@@ -131,12 +125,14 @@ public class NFA{
         int stateNumDFA = 1;
         HashSet<Integer> acceptedStates = new HashSet<>();
         int startStateDFA = -1;
+
         while(!transFunc.isEmpty()){
             ArrayList<TransFunction> gone = new ArrayList<>();
             HashSet<Integer> tempStartSet = transFunc.get(0).getState1();
             transFunc.get(0).setStartState(stateNumDFA);
+            gone.add(transFunc.get(0));
             if(transFunc.get(0).getState1().equals(set1)){
-                startStateDFA=stateNumDFA;
+                startStateDFA = stateNumDFA;
             }
             for(int state:transFunc.get(0).getState1()){
                 for(int accept: acceptStates){
@@ -156,6 +152,10 @@ public class NFA{
             numStatesDFA++;
             stateNumDFA++;
         }
+        dfa.setNumStates((numStatesDFA));
+        ArrayList<Integer> acceptStateList = new ArrayList<>(acceptedStates);
+        dfa.setAcceptStates(acceptStateList);
+        dfa.setStartState(startStateDFA);
         for(TransFunction tran: newTrans){
             HashSet<Integer> tempSet = tran.getState1();
             int tempDFAState = tran.getstartState();
@@ -165,11 +165,12 @@ public class NFA{
                 }
             }
         }
-        ArrayList<DFATrans> transitions = new ArrayList<>();
-        for(TransFunction tomp: newTrans){
+            ArrayList<DFATrans> transitions = new ArrayList<>();
+            for(TransFunction tomp: newTrans){
             DFATrans temp = new DFATrans(tomp.getstartState(), tomp.getSymbol(), tomp.getEndState());
             transitions.add(temp);
         }
+
         return transitions;
     }
 
@@ -237,9 +238,6 @@ public class NFA{
     }
     public void setNumStates(int num){
         this.numStates = num;
-    }
-    public char[] getAlph(){
-        return alph;
     }
     public void setAlph(char[] alph){
         this.alph = alph;

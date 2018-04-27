@@ -44,13 +44,13 @@ public class Main {
             nfa = reg.regToNFA();
         }
         catch(Exception e){
-            outWriter.println("Cannot convert regular expression");
+            outWriter.println("Invalid Expression");
             outWriter.close();
         }
         if(nfa!=null){
-            DFA dfa = nfa.convtoDFA();
+            DFA dfa = nfa.toDFA();
             dfa.setSymbols(reg.getSymbols());
-            dfa.printDFA(outWriter);
+            dfa.stringOutput(outWriter);
         }
     }
 
